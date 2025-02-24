@@ -185,7 +185,7 @@ open class EMPageViewController: UIViewController, UIScrollViewDelegate {
     /// Initializes a newly created page view controller with the specified navigation orientation.
     /// - parameter navigationOrientation: The page view controller's navigation scroll direction.
     /// - returns: The initialized page view controller.
-    public convenience init(navigationOrientation: EMPageViewControllerNavigationOrientation) {
+    @objc public convenience init(navigationOrientation: EMPageViewControllerNavigationOrientation) {
         self.init()
         self.navigationOrientation = navigationOrientation
     }
