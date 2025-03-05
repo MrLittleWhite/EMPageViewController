@@ -141,6 +141,8 @@ open class EMPageViewController: UIViewController, UIScrollViewDelegate {
         return self.navigationOrientation == .horizontal
     }
 
+    private var isChangeSize = false
+    
     /// The underlying `UIScrollView` responsible for scrolling page views.
     /// - important: Properties should be set with caution to prevent unexpected behavior.
     open private(set) lazy var scrollView: UIScrollView = {
@@ -342,9 +344,10 @@ open class EMPageViewController: UIViewController, UIScrollViewDelegate {
     open override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
         
-        guard !scrolling else {
+        guard !scrolling || isChangeSize else {
             return
         }
+        isChangeSize = false;
         
         self.scrollView.frame = self.view.bounds
         if self.isOrientationHorizontal {
@@ -665,4 +668,13 @@ open class EMPageViewController: UIViewController, UIScrollViewDelegate {
         delegate?.em_pageViewController?(self, scrollViewDidEndDragging: scrollView, willDecelerate: decelerate)
     }
     
+    // MARK: - size change
+    open override func viewWillTransition(to size: CGSize, with coordinator: any UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+
+            coordinator.animate(alongsideTransition: { [weak self] _ in
+                self?.isChangeSize = true
+                self?.view.setNeedsLayout()
+            })
+    }
 }
