@@ -347,7 +347,6 @@ open class EMPageViewController: UIViewController, UIScrollViewDelegate {
         guard !scrolling || isChangeSize else {
             return
         }
-        isChangeSize = false;
         
         self.scrollView.frame = self.view.bounds
         if self.isOrientationHorizontal {
@@ -573,7 +572,7 @@ open class EMPageViewController: UIViewController, UIScrollViewDelegate {
     // MARK: - UIScrollView Delegate
     
     open func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if !adjustingContentOffset {
+        if !adjustingContentOffset && !isChangeSize {
         
             let distance = self.isOrientationHorizontal ? self.view.bounds.width : self.view.bounds.height
             let progress = ((self.isOrientationHorizontal ? scrollView.contentOffset.x : scrollView.contentOffset.y) - distance) / distance
@@ -671,10 +670,12 @@ open class EMPageViewController: UIViewController, UIScrollViewDelegate {
     // MARK: - size change
     open override func viewWillTransition(to size: CGSize, with coordinator: any UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
-
-            coordinator.animate(alongsideTransition: { [weak self] _ in
-                self?.isChangeSize = true
-                self?.view.setNeedsLayout()
-            })
+            
+        coordinator.animate { [weak self] _ in
+            self?.isChangeSize = true
+            self?.view.setNeedsLayout()
+        } completion: { [weak self] _ in
+            self?.isChangeSize = false
+        }
     }
 }
