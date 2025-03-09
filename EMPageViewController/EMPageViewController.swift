@@ -669,10 +669,11 @@ open class EMPageViewController: UIViewController, UIScrollViewDelegate {
     
     // MARK: - size change
     open override func viewWillTransition(to size: CGSize, with coordinator: any UIViewControllerTransitionCoordinator) {
+        
+        self.isChangeSize = true
+        
         super.viewWillTransition(to: size, with: coordinator)
-            
         coordinator.animate { [weak self] _ in
-            self?.isChangeSize = true
             self?.view.setNeedsLayout()
         } completion: { [weak self] _ in
             self?.isChangeSize = false
