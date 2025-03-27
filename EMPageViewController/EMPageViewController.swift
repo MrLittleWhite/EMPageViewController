@@ -99,6 +99,8 @@ import UIKit
     @objc optional func em_pageViewController(_ pageViewController: EMPageViewController, didFinishScrollingFrom startingViewController: UIViewController?, destinationViewController:UIViewController, transitionSuccessful: Bool)
     
     @objc optional func em_pageViewController(_ pageViewController: EMPageViewController, scrollViewDidEndDragging: UIScrollView, willDecelerate decelerate: Bool)
+    
+    @objc optional func em_pageViewController(_ pageViewController: EMPageViewController, scrollViewDidEndScrolling: UIScrollView)
 }
 
 /**
@@ -652,19 +654,29 @@ open class EMPageViewController: UIViewController, UIScrollViewDelegate {
                 (self.afterViewController != nil && self.beforeViewController == nil && scrollView.contentOffset.x > abs(scrollView.contentInset.left)) || // If it's at the beginning of the collection, the decelleration can't be triggered by scrolling away from, than torwards the inset
                 (self.beforeViewController != nil && self.afterViewController == nil && scrollView.contentOffset.x < abs(scrollView.contentInset.right)) { // Same as the last condition, but at the end of the collection
                     scrollView.setContentOffset(CGPoint(x: self.view.bounds.width, y: 0), animated: true)
+            } else {
+                delegate?.em_pageViewController?(self, scrollViewDidEndScrolling: scrollView)
             }
         } else {
             if  (self.beforeViewController != nil && self.afterViewController != nil) || // It isn't at the beginning or end of the page collection
                 (self.afterViewController != nil && self.beforeViewController == nil && scrollView.contentOffset.y > abs(scrollView.contentInset.top)) || // If it's at the beginning of the collection, the decelleration can't be triggered by scrolling away from, than torwards the inset
                 (self.beforeViewController != nil && self.afterViewController == nil && scrollView.contentOffset.y < abs(scrollView.contentInset.bottom)) { // Same as the last condition, but at the end of the collection
                     scrollView.setContentOffset(CGPoint(x: 0, y: self.view.bounds.height), animated: true)
+            } else {
+                delegate?.em_pageViewController?(self, scrollViewDidEndScrolling: scrollView)
             }
         }
-        
     }
     
     public func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         delegate?.em_pageViewController?(self, scrollViewDidEndDragging: scrollView, willDecelerate: decelerate)
+        if !decelerate {
+            delegate?.em_pageViewController?(self, scrollViewDidEndScrolling: scrollView)
+        }
+    }
+    
+    public func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
+        delegate?.em_pageViewController?(self, scrollViewDidEndScrolling: scrollView)
     }
     
     // MARK: - size change
