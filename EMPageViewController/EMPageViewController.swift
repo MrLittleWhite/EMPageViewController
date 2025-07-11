@@ -124,7 +124,7 @@ import UIKit
 }
 
 /// Manages page navigation between view controllers. View controllers can be navigated via swiping gestures, or called programmatically.
-open class EMPageViewController: UIViewController, UIScrollViewDelegate {
+open class EMPageViewController: UIViewController, UIScrollViewDelegate, UIGestureRecognizerDelegate {
     
     /// The object that provides view controllers on an as-needed basis throughout the navigation of the page view controller.
     ///
@@ -145,9 +145,11 @@ open class EMPageViewController: UIViewController, UIScrollViewDelegate {
 
     private var isChangeSize = false
     
+    @objc open var shouldRecognizeSimultaneously = false
+    
     /// The underlying `UIScrollView` responsible for scrolling page views.
     /// - important: Properties should be set with caution to prevent unexpected behavior.
-    open private(set) lazy var scrollView: UIScrollView = {
+    @objc open private(set) lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.isPagingEnabled = true
         scrollView.scrollsToTop = false
@@ -570,6 +572,11 @@ open class EMPageViewController: UIViewController, UIScrollViewDelegate {
         self.layoutViews()
     }
     
+    // MARK: - UIGestureRecognizerDelegate
+    
+    func gestureRecognizer(_ gesture: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGesture: UIGestureRecognizer) -> Bool {
+        return shouldRecognizeSimultaneously
+    }
     
     // MARK: - UIScrollView Delegate
     
